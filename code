@@ -6,181 +6,201 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set()
 from sklearn.preprocessing import OneHotEncoder
+
 #produce random data
 #number of samples 1,000
 import random
 random.seed(a=1, version=2)
 diet = []
 for i in range(0,1000):
-n = random.randint(0,3)
-diet.append(n)
+  n = random.randint(0,3)
+  diet.append(n) 
+
 Age = []
 for i in range(0,1000):
-n = random.randint(30,95)
-Age.append(n)
+  n = random.randint(30,95)
+  Age.append(n) 
+
 import numpy as np
 rn = [[random.randint(0,1) for i in range(1000)] for j in range(12)]
 #print(rn[0])
-pd.set_option(&quot;display.max_rows&quot;, None, &quot;display.max_columns&quot;, None)
-# HFO diet, Starvation, HF diet, CR
-df = pd.DataFrame({
-&#39;ATP&#39;: rn[0],
-&#39;Opa1&#39; : rn[1],
-&#39;MFN1&#39;: rn[2],
-&#39;MFN2&#39; : rn[3],
-&#39;DRP1&#39;: rn[4],
-&#39;FIS1&#39; : rn[5],
-&#39;Diabetes&#39;: rn[6],
-&#39;Oxidative_Stress&#39; : rn[7],
-&#39;Hypertension&#39; : rn[8],
-&#39;Obesity&#39; : rn[9],
-&#39;Depression&#39; : rn[10],
-&#39;Physical_activity&#39; : rn[11],
-&#39;Diet&#39;: diet,
-&#39;Age&#39;: Age,
-})
-df[&#39;Diet&#39;] = df[&#39;Diet&#39;].replace(1, &#39;HFO_diet&#39;)
-df[&#39;Diet&#39;] = df[&#39;Diet&#39;].replace(2, &#39;Starvation&#39;)
-df[&#39;Diet&#39;] = df[&#39;Diet&#39;].replace(3, &#39;HL_diet&#39;)
+pd.set_option("display.max_rows", None, "display.max_columns", None)
 
-#df[&#39;Diet&#39;] = df[&#39;Diet&#39;].replace(4, &#39;CR&#39;)
-df[&#39;Diet&#39;] = df[&#39;Diet&#39;].replace(0, &#39;CR&#39;)
+# HFO diet, Starvation, HF diet, CR
+
+df = pd.DataFrame({
+    'ATP': rn[0],
+    'Opa1' : rn[1],
+    'MFN1': rn[2],
+    'MFN2' : rn[3],
+    'DRP1': rn[4],
+    'FIS1' : rn[5],
+    'Diabetes': rn[6],
+    'Oxidative_Stress' : rn[7],
+    'Hypertension' : rn[8],
+    'Obesity' : rn[9],
+    'Depression' : rn[10],
+    'Physical_activity' : rn[11],
+    'Diet': diet,
+    'Age': Age,
+})
+
+df['Diet'] = df['Diet'].replace(1, 'HFO_diet')
+df['Diet'] = df['Diet'].replace(2, 'Starvation')
+df['Diet'] = df['Diet'].replace(3, 'HL_diet')
+#df['Diet'] = df['Diet'].replace(4, 'CR')
+
+df['Diet'] = df['Diet'].replace(0, 'CR')
+
 print(df)
+
 features = df.columns[:-1]
 print(features)
+
 #4 results for fusion, fission, Prodromal/ Mixed AD
+
 rn = [[random.uniform(0, 0) for i in range(1000)] for j in range(3)]
 df_diagnosis = pd.DataFrame({
-&#39;fusion&#39;: rn[0],
-&#39;fission&#39; : rn[1],
-&#39;AD&#39;: rn[2]
+'fusion': rn[0],
+'fission' : rn[1],
+'AD': rn[2]
 })
 #print(df_diagnosis)
-for i in range(0,len(df[&#39;Age&#39;])):
-if (df.at[i,&#39;Diet&#39;]==&#39;HFO_diet&#39;):
-if (df.at[i,&#39;ATP&#39;]==1):
-df_diagnosis.at[i,&#39;fusion&#39;] = 1
-if (df.at[i,&#39;Opa1&#39;]==1):
-df_diagnosis.at[i,&#39;fusion&#39;] = 1
-if (df_diagnosis.at[i,&#39;AD&#39;] &lt; 0.61):
-df_diagnosis.at[i,&#39;AD&#39;] = 0.614
-if (df.at[i,&#39;MFN1&#39;]==1):
-df_diagnosis.at[i,&#39;fusion&#39;] = 1
-if (df_diagnosis.at[i,&#39;AD&#39;] &lt; 0.278):
-df_diagnosis.at[i,&#39;AD&#39;] = 0.278
-if (df.at[i,&#39;MFN2&#39;]==1):
-df_diagnosis.at[i,&#39;fusion&#39;] = 1
-if (df_diagnosis.at[i,&#39;AD&#39;] &lt; 0.336):
-df_diagnosis.at[i,&#39;AD&#39;] = 0.336
-elif (df.at[i,&#39;Diet&#39;]==&#39;Starvation&#39;):
-if (df.at[i,&#39;DRP1&#39;]==1):
-df_diagnosis.at[i,&#39;AD&#39;] = 0.743
-df_diagnosis.at[i,&#39;fission&#39;] = 1
-if (df.at[i,&#39;MFN2&#39;]==1):
-df_diagnosis.at[i,&#39;fusion&#39;] = 1
-if (df_diagnosis.at[i,&#39;AD&#39;] &lt; 0.336):
-df_diagnosis.at[i,&#39;AD&#39;] = 0.336
-else:
-df_diagnosis.at[i,&#39;fusion&#39;] = 0
-else:
-df_diagnosis.at[i,&#39;fission&#39;] = 0
 
-df_diagnosis.at[i,&#39;AD&#39;] = 0
-elif (df.at[i,&#39;Diet&#39;]==&#39;HL_Diet&#39;):
-if (df.at[i,&#39;DRP1&#39;]==1):
-df_diagnosis.at[i,&#39;fission&#39;] = 1
-if (df.at[i,&#39;MFN2&#39;]==1):
-df_diagnosis.at[i,&#39;fission&#39;] = 1
-if (df_diagnosis.at[i,&#39;AD&#39;] &lt; 0.336):
-df_diagnosis.at[i,&#39;AD&#39;] = 0.336
-if (df.at[i,&#39;FIS1&#39;]==1):
-df_diagnosis.at[i,&#39;fission&#39;] = 1
-if (df_diagnosis.at[i,&#39;AD&#39;] &lt; 0.336):
-df_diagnosis.at[i,&#39;AD&#39;] = 0.336
-else:
-if (df.at[i,&#39;ATP&#39;]==1):
-df_diagnosis.at[i,&#39;fusion&#39;] = 1
-if (df.at[i,&#39;Opa1&#39;]==1):
-df_diagnosis.at[i,&#39;fusion&#39;] = 1
-if (df_diagnosis.at[i,&#39;AD&#39;] &lt; 0.61):
-df_diagnosis.at[i,&#39;AD&#39;] = 0.614
-if (df.at[i,&#39;MFN1&#39;]==1):
-df_diagnosis.at[i,&#39;fusion&#39;] = 1
-if (df_diagnosis.at[i,&#39;AD&#39;] &lt; 0.278):
-df_diagnosis.at[i,&#39;AD&#39;] = 0.278
-if (df.at[i,&#39;MFN2&#39;]==1):
-df_diagnosis.at[i,&#39;fusion&#39;] = 1
-if (df_diagnosis.at[i,&#39;AD&#39;] &lt; 0.336):
-df_diagnosis.at[i,&#39;AD&#39;] = 0.336
-if (df.at[i,&#39;DRP1&#39;]==1):
-df_diagnosis.at[i,&#39;fission&#39;] = 1
-df_diagnosis.at[i,&#39;AD&#39;] = 0.743
-if (df.at[i,&#39;MFN2&#39;]==1):
-df_diagnosis.at[i,&#39;fission&#39;] = 1
-if (df_diagnosis.at[i,&#39;AD&#39;] &lt; 0.336):
-df_diagnosis.at[i,&#39;AD&#39;] = 0.336
-if (df.at[i,&#39;FIS1&#39;]==1):
-df_diagnosis.at[i,&#39;fission&#39;] = 1
-if (df_diagnosis.at[i,&#39;AD&#39;] &lt; 0.6):
-df_diagnosis.at[i,&#39;AD&#39;] = 0.6
-if (df.at[i,&#39;Obesity&#39;]==1 or df.at[i,&#39;Diabetes&#39;]==1 or df.at[i,&#39;Hypertension&#39;] ==1 or
-df.at[i,&#39;Depression&#39;] ==1 or df.at[i,&#39;Physical_activity&#39;] ==1):
-if (df.at[i,&#39;Obesity&#39;] ==1):
-if (df_diagnosis.at[i,&#39;AD&#39;] &lt; 0.03):
-df_diagnosis.at[i,&#39;AD&#39;] = 0.03
-if (df.at[i,&#39;Diabetes&#39;] ==1):
-if (df_diagnosis.at[i,&#39;AD&#39;] &lt; 0.064):
+for i in range(0,len(df['Age'])):
+  
+  if (df.at[i,'Diet']=='HFO_diet'):
+    if (df.at[i,'ATP']==1):
+      df_diagnosis.at[i,'fusion'] = 1
+    if (df.at[i,'Opa1']==1):
+      df_diagnosis.at[i,'fusion'] = 1
+      if (df_diagnosis.at[i,'AD'] < 0.61):
+        df_diagnosis.at[i,'AD'] = 0.614
+    if (df.at[i,'MFN1']==1):
+      df_diagnosis.at[i,'fusion'] = 1      
+      if (df_diagnosis.at[i,'AD'] < 0.278):
+        df_diagnosis.at[i,'AD'] = 0.278
+    if (df.at[i,'MFN2']==1):
+      df_diagnosis.at[i,'fusion'] = 1 
+      if (df_diagnosis.at[i,'AD'] < 0.336):
+        df_diagnosis.at[i,'AD'] = 0.336
 
-df_diagnosis.at[i,&#39;AD&#39;] = 0.064
-if (df.at[i,&#39;Hypertension&#39;] ==1):
-if (df_diagnosis.at[i,&#39;AD&#39;] &lt; 0.2):
-df_diagnosis.at[i,&#39;AD&#39;] = 0.2
-if (df.at[i,&#39;Depression&#39;] ==1):
-if (df_diagnosis.at[i,&#39;AD&#39;] &lt; 0.132):
-df_diagnosis.at[i,&#39;AD&#39;] = 0.132
-if (df.at[i,&#39;Physical_activity&#39;] ==1):
-if (df_diagnosis.at[i,&#39;AD&#39;] &lt; 0.177):
-df_diagnosis.at[i,&#39;AD&#39;] = 0.177
-if (df.at[i,&#39;Opa1&#39;] ==1):
-if (df_diagnosis.at[i,&#39;AD&#39;] &lt; 0.614):
-df_diagnosis.at[i,&#39;AD&#39;] = 0.614
-if (df.at[i,&#39;MFN1&#39;]==1):
-if (df_diagnosis.at[i,&#39;AD&#39;] &lt; 0.278):
-df_diagnosis.at[i,&#39;AD&#39;] = 0.278
-if (df.at[i,&#39;MFN2&#39;] ==1):
-if (df_diagnosis.at[i,&#39;AD&#39;] &lt; 0.336):
-df_diagnosis.at[i,&#39;AD&#39;] = 0.336
-if (df.at[i,&#39;DRP1&#39;] ==1):
-if (df_diagnosis.at[i,&#39;AD&#39;] &lt; 0.743):
-df_diagnosis.at[i,&#39;AD&#39;] = 0.743
-if (df.at[i,&#39;FIS1&#39;] ==1):
-if (df_diagnosis.at[i,&#39;AD&#39;] &lt; 0.60):
-df_diagnosis.at[i,&#39;AD&#39;] = 0.60
-if (df_diagnosis.at[i,&#39;fission&#39;]==1 and df_diagnosis.at[i,&#39;fusion&#39;]==1 and
-df_diagnosis.at[i,&#39;AD&#39;]&lt;0.336):
-df_diagnosis.at[i,&#39;AD&#39;] = 0.336
+  elif (df.at[i,'Diet']=='Starvation'):
+    if (df.at[i,'DRP1']==1):
+      df_diagnosis.at[i,'AD'] = 0.743
+      df_diagnosis.at[i,'fission'] = 1
+      if (df.at[i,'MFN2']==1):
+        df_diagnosis.at[i,'fusion'] = 1
+        if (df_diagnosis.at[i,'AD'] < 0.336):
+          df_diagnosis.at[i,'AD'] = 0.336
+      else:
+        df_diagnosis.at[i,'fusion'] = 0
+
+    else:
+      df_diagnosis.at[i,'fission'] = 0
+      df_diagnosis.at[i,'AD'] = 0
+
+  elif (df.at[i,'Diet']=='HL_Diet'):
+    if (df.at[i,'DRP1']==1):
+      df_diagnosis.at[i,'fission'] = 1
+      if (df.at[i,'MFN2']==1):
+        df_diagnosis.at[i,'fission'] = 1
+        if (df_diagnosis.at[i,'AD'] < 0.336):
+          df_diagnosis.at[i,'AD'] = 0.336   
+    if (df.at[i,'FIS1']==1):
+      df_diagnosis.at[i,'fission'] = 1
+      if (df_diagnosis.at[i,'AD'] < 0.336):
+        df_diagnosis.at[i,'AD'] = 0.336 
+
+  else:
+    if (df.at[i,'ATP']==1):
+      df_diagnosis.at[i,'fusion'] = 1
+    if (df.at[i,'Opa1']==1):
+      df_diagnosis.at[i,'fusion'] = 1
+      if (df_diagnosis.at[i,'AD'] < 0.61):
+        df_diagnosis.at[i,'AD'] = 0.614
+    if (df.at[i,'MFN1']==1):
+      df_diagnosis.at[i,'fusion'] = 1
+      if (df_diagnosis.at[i,'AD'] < 0.278):
+        df_diagnosis.at[i,'AD'] = 0.278
+    if (df.at[i,'MFN2']==1):
+      df_diagnosis.at[i,'fusion'] = 1 
+      if (df_diagnosis.at[i,'AD'] < 0.336):
+        df_diagnosis.at[i,'AD'] = 0.336
+     
+    if (df.at[i,'DRP1']==1):
+      df_diagnosis.at[i,'fission'] = 1
+      df_diagnosis.at[i,'AD'] = 0.743
+      if (df.at[i,'MFN2']==1):
+        df_diagnosis.at[i,'fission'] = 1
+        if (df_diagnosis.at[i,'AD'] < 0.336):
+          df_diagnosis.at[i,'AD'] = 0.336   
+     
+    if (df.at[i,'FIS1']==1):
+      df_diagnosis.at[i,'fission'] = 1
+      if (df_diagnosis.at[i,'AD'] < 0.6):
+        df_diagnosis.at[i,'AD'] = 0.6
+ 
+  if (df.at[i,'Obesity']==1 or df.at[i,'Diabetes']==1 or df.at[i,'Hypertension'] ==1 or df.at[i,'Depression'] ==1  or df.at[i,'Physical_activity'] ==1):
+    if (df.at[i,'Obesity'] ==1):
+      if (df_diagnosis.at[i,'AD'] < 0.03):
+        df_diagnosis.at[i,'AD'] = 0.03 
+    if (df.at[i,'Diabetes'] ==1):
+      if (df_diagnosis.at[i,'AD'] < 0.064):
+        df_diagnosis.at[i,'AD'] = 0.064 
+    if (df.at[i,'Hypertension'] ==1):
+      if (df_diagnosis.at[i,'AD'] < 0.2):
+        df_diagnosis.at[i,'AD'] = 0.2     
+    if (df.at[i,'Depression'] ==1):
+      if (df_diagnosis.at[i,'AD'] < 0.132):
+        df_diagnosis.at[i,'AD'] = 0.132    
+    if (df.at[i,'Physical_activity'] ==1):
+      if (df_diagnosis.at[i,'AD'] < 0.177):
+        df_diagnosis.at[i,'AD'] = 0.177  
+
+  if (df.at[i,'Opa1'] ==1):
+    if (df_diagnosis.at[i,'AD'] < 0.614):
+      df_diagnosis.at[i,'AD'] = 0.614 
+  if (df.at[i,'MFN1']==1):
+    if (df_diagnosis.at[i,'AD'] < 0.278):
+      df_diagnosis.at[i,'AD'] = 0.278 
+  if (df.at[i,'MFN2'] ==1):
+    if (df_diagnosis.at[i,'AD'] < 0.336):
+      df_diagnosis.at[i,'AD'] = 0.336     
+  if (df.at[i,'DRP1'] ==1):
+    if (df_diagnosis.at[i,'AD'] < 0.743):
+      df_diagnosis.at[i,'AD'] = 0.743    
+  if (df.at[i,'FIS1'] ==1):
+    if (df_diagnosis.at[i,'AD'] < 0.60):
+      df_diagnosis.at[i,'AD'] = 0.60      
+
+  if (df_diagnosis.at[i,'fission']==1 and df_diagnosis.at[i,'fusion']==1 and df_diagnosis.at[i,'AD']<0.336):
+        df_diagnosis.at[i,'AD'] = 0.336
+
 print(df_diagnosis)
+
 #Import Age prediction
-for i in range(0,len(df[&#39;Age&#39;])):
-if (df.at[i,&#39;Age&#39;]&lt;85):
-if (df.at[i,&#39;Age&#39;]&lt;75):
-if (df.at[i,&#39;Age&#39;]&lt;65):
-if (df_diagnosis.at[i,&#39;AD&#39;] &lt; 0.04):
-df_diagnosis.at[i,&#39;AD&#39;] = 0.04
-else:
-if (df_diagnosis.at[i,&#39;AD&#39;] &lt; 0.15):
-df_diagnosis.at[i,&#39;AD&#39;] = 0.15
-else:
-if (df_diagnosis.at[i,&#39;AD&#39;]&lt;0.43):
-df_diagnosis.at[i,&#39;AD&#39;] = 0.43
-else:
-if (df_diagnosis.at[i,&#39;AD&#39;]&lt;0.38):
-df_diagnosis.at[i,&#39;AD&#39;] = 0.38
+for i in range(0,len(df['Age'])):
+  if (df.at[i,'Age']<85):
+    if (df.at[i,'Age']<75):
+      if (df.at[i,'Age']<65):
+        if (df_diagnosis.at[i,'AD'] < 0.04):
+          df_diagnosis.at[i,'AD'] = 0.04
+      else:
+        if (df_diagnosis.at[i,'AD'] < 0.15):
+          df_diagnosis.at[i,'AD'] = 0.15
+    else:
+      if (df_diagnosis.at[i,'AD']<0.43):
+        df_diagnosis.at[i,'AD'] = 0.43
+  else:
+    if (df_diagnosis.at[i,'AD']<0.38):
+      df_diagnosis.at[i,'AD'] = 0.38
 
 #Import stress
-for i in range(0,len(df[&#39;Age&#39;])):
-if (df.at[i,&#39;Oxidative_Stress&#39;]==1):
-if (df_diagnosis.at[i,&#39;AD&#39;]&lt;0.3):
-df_diagnosis.at[i,&#39;AD&#39;] = 0.3
-print(max(df_diagnosis[&#39;AD&#39;]),min(df_diagnosis[&#39;AD&#39;]))
+for i in range(0,len(df['Age'])):
+    if (df.at[i,'Oxidative_Stress']==1):
+      if (df_diagnosis.at[i,'AD']<0.3):
+          df_diagnosis.at[i,'AD'] = 0.3
+
+print(max(df_diagnosis['AD']),min(df_diagnosis['AD']))
 print(df_diagnosis)
